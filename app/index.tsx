@@ -104,9 +104,9 @@ export default function LandingPage() {
         ) : null}
       </ScrollView>
 
-      <TouchableOpacity style={styles.button2} onPress={handleLogout}>
+      {/* <TouchableOpacity style={styles.button2} onPress={handleLogout}>
         <Text style={styles.buttonText2}>Logout</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }

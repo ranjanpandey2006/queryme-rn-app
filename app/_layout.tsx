@@ -7,6 +7,7 @@ export default function Layout() {
       <Stack.Screen name="index" options={{ title: "QueryMe" }} />
       <Stack.Screen name="login" options={{ title: "Login" }} />
       <Stack.Screen name="register" options={{ title: "Register" }} />
+      <Stack.Screen name="newlogin" options={{ title: "Newlogin" }} />
     </Stack>
   );
 }
