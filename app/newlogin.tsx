@@ -1,4 +1,5 @@
-import { router } from "expo-router";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from "react";
 import {
     Alert,
@@ -30,17 +31,75 @@ const LoginScreen: React.FC = () => {
     const [showOTP, setShowOTP] = useState(false);
     const [otp, setOtp] = useState("");
 
-    const handleLogin = () => {
+    const navigation = useNavigation();
+
+    const handleLogin = async () => {
         if (name && mobile && society && agree) {
-            setShowOTP(true);
+            try {
+                // Make API call to backend for OTP generation
+                const response = await fetch("http://127.0.0.1:5500/register-user/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        mobilenumber: mobile,
+                        name,
+                        society,
+                        otp,
+                        tnc: agree
+                    }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    // OTP sent successfully
+                    Alert.alert("OTP sent successfully!");
+                    setShowOTP(true);
+                } else {
+                    // Server responded with an error
+                    Alert.alert("Error", data.message || "Something went wrong.");
+                }
+            } catch (error) {
+                console.error("Error sending OTP:", error);
+                Alert.alert("Network Error", "Please check your connection and try again.");
+            }
         } else {
             Alert.alert("Please fill all fields and accept terms.");
         }
     };
 
-    //   const handleVerify = () => {
-    //     Alert.alert("OTP Verified!");
-    //   };
+    const handleVerify = async () => {
+        if (otp) {
+            try {
+                const response = await fetch("http://127.0.0.1:5500/validate-otp/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ otp }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    Alert.alert(data.message || "OTP Verified!");
+                    setShowOTP(false);
+                    await AsyncStorage.setItem("loginStatus", "success");
+                    navigation.navigate("index" as never);
+                } else {
+                    Alert.alert("Error", data.message || "Incorrect OTP");
+                }
+
+            } catch (error) {
+                console.error("Error verifying OTP:", error);
+                Alert.alert("Network Error", "Please check your connection and try again.");
+            }
+        } else {
+            Alert.alert("Please enter your OTP");
+        }
+    };
+
 
     return (
         <View style={styles.container}>
@@ -102,7 +161,8 @@ const LoginScreen: React.FC = () => {
                         onChangeText={setOtp}
                     />
 
-                    <TouchableOpacity style={styles.button} onPress={() => router.push("/")}>
+                    {/* <TouchableOpacity style={styles.button} onPress={() => router.push("/")}> */}
+                    <TouchableOpacity style={styles.button} onPress={handleVerify}>
                         <Text style={styles.buttonText}>Verify</Text>
                     </TouchableOpacity>
                 </View>

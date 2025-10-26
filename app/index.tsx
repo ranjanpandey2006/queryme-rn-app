@@ -1,10 +1,13 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { removeToken } from "../utils/auth";
 
 export default function LandingPage() {
-  const router = useRouter(); 
+  const router = useRouter();
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
   // useEffect(() => {
@@ -62,12 +65,43 @@ export default function LandingPage() {
         setReply("Sorry, I couldn’t find an answer.");
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
       setReply("Error fetching response. Please try again.");
     } finally {
       setLoading2(false);
     }
   };
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const loginStatus = await AsyncStorage.getItem('loginStatus');
+
+        if (loginStatus === 'success') {
+          // ✅ Stay on this page
+          setLoading(false);
+        } else {
+          // 🚫 Not logged in — redirect to Login screen
+          navigation.navigate('Login' as never);
+        }
+      } catch (error) {
+        console.error('Error reading login status:', error);
+        navigation.navigate('newlogin' as never);
+      }
+    };
+
+    checkLoginStatus();
+  }, [navigation]);
+
+  if (loading) {
+    // ⏳ Show loader until check completes
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#000" />
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -89,7 +123,7 @@ export default function LandingPage() {
 
         {loading2 && <ActivityIndicator size="large" color="#007BFF" style={{ marginTop: 20 }} />}
 
-        {query ? (
+        {reply ? (
           <View style={styles.responseContainer}>
             <Text style={styles.questionTitle}>Question:</Text>
             <Text style={styles.questionText}>{query}</Text>
