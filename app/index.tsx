@@ -82,7 +82,7 @@ export default function LandingPage() {
           setLoading(false);
         } else {
           // 🚫 Not logged in — redirect to Login screen
-          navigation.navigate('Login' as never);
+          navigation.navigate('newlogin' as never);
         }
       } catch (error) {
         console.error('Error reading login status:', error);
