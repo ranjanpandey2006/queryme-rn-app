@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from "react";
 import {
+    ActivityIndicator,
     Alert,
     StyleSheet,
     Text,
@@ -30,10 +31,13 @@ const LoginScreen: React.FC = () => {
     const [agree, setAgree] = useState(false);
     const [showOTP, setShowOTP] = useState(false);
     const [otp, setOtp] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [otpErrMsg, setOtpErrMsg] = useState(false);
 
     const navigation = useNavigation();
 
     const handleLogin = async () => {
+        setLoading(true);
         if (name && mobile && society && agree) {
             try {
                 // Make API call to backend for OTP generation
@@ -53,23 +57,32 @@ const LoginScreen: React.FC = () => {
 
                 const data = await response.json();
                 if (response.ok) {
+                    setLoading(false);
                     // OTP sent successfully
                     Alert.alert("OTP sent successfully!");
+                    alert("OTP sent successfully!");
                     setShowOTP(true);
                 } else {
+                    setLoading(false);
                     // Server responded with an error
                     Alert.alert("Error", data.message || "Something went wrong.");
+                    alert("Something went wrong.");
                 }
             } catch (error) {
+                setLoading(false);
                 console.error("Error sending OTP:", error);
                 Alert.alert("Network Error", "Please check your connection and try again.");
+                alert("Network Error, Please check your connection and try again.");
             }
         } else {
+            setLoading(false);
             Alert.alert("Please fill all fields and accept terms.");
+            alert("Please fill all fields and accept terms.");
         }
     };
 
     const handleVerify = async () => {
+        setLoading(true);
         if (otp) {
             try {
                 const response = await fetch("http://127.0.0.1:5500/validate-otp/", {
@@ -83,20 +96,28 @@ const LoginScreen: React.FC = () => {
                 const data = await response.json();
 
                 if (response.ok) {
+                    setLoading(false);
+                    setOtpErrMsg(false);
                     Alert.alert(data.message || "OTP Verified!");
                     setShowOTP(false);
                     await AsyncStorage.setItem("loginStatus", "success");
                     navigation.navigate("index" as never);
                 } else {
+                    setLoading(false);
+                    setOtpErrMsg(true);
                     Alert.alert("Error", data.message || "Incorrect OTP");
                 }
 
             } catch (error) {
+                setLoading(false);
                 console.error("Error verifying OTP:", error);
                 Alert.alert("Network Error", "Please check your connection and try again.");
+                alert("Network Error Please check your connection and try again.");
             }
         } else {
+            setLoading(false);
             Alert.alert("Please enter your OTP");
+            alert("Please enter your OTP");
         }
     };
 
@@ -108,7 +129,7 @@ const LoginScreen: React.FC = () => {
                 <View style={styles.logoCircle}>
                     <Text style={styles.logoIcon}>🤖</Text>
                 </View>
-                <Text style={styles.title}>Society App{"\n"}AI Assistant</Text>
+                <Text style={styles.title}>QueryMe{"\n"}AI Assistant</Text>
             </View>
 
             {/* Form Section */}
@@ -142,7 +163,8 @@ const LoginScreen: React.FC = () => {
                     </View>
 
                     <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                        <Text style={styles.buttonText}>Login</Text>
+                        {loading === false ? <Text style={styles.buttonText}>Login</Text>:
+                        <ActivityIndicator size="small" color="#007AFF" />}
                     </TouchableOpacity>
                 </View>
             )}
@@ -160,10 +182,11 @@ const LoginScreen: React.FC = () => {
                         value={otp}
                         onChangeText={setOtp}
                     />
-
+                    {otpErrMsg && (<Text style={styles.otpErrText}>*Incorrect OTP</Text>)}
                     {/* <TouchableOpacity style={styles.button} onPress={() => router.push("/")}> */}
-                    <TouchableOpacity style={styles.button} onPress={handleVerify}>
-                        <Text style={styles.buttonText}>Verify</Text>
+                    <TouchableOpacity style={styles.button2} onPress={handleVerify}>
+                        {loading === false ?<Text style={styles.buttonText}>Verify</Text>:
+                        <ActivityIndicator size="small" color="#007AFF" />}
                     </TouchableOpacity>
                 </View>
             )}
@@ -243,6 +266,14 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginTop: 10,
     },
+    button2: {
+        backgroundColor: "#000",
+        borderRadius: 10,
+        padding: 12,
+        alignItems: "center",
+        marginTop: 10,
+        width: 280
+    },
     buttonText: {
         color: "#fff",
         fontWeight: "600",
@@ -267,4 +298,8 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         textAlign: "center",
     },
+    otpErrText: {
+        color: "red",
+        textAlign: "center",
+    }
 });

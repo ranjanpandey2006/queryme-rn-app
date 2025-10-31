@@ -147,7 +147,7 @@ export default function LandingPage() {
 
 const styles = StyleSheet.create({
   loaderContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#0b132b" },
+  // container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#0b132b" },
   // title: { fontSize: 28, fontWeight: "bold", marginBottom: 10 },
   subtitle: { fontSize: 16, color: "#555", marginBottom: 30 },
   button2: { backgroundColor: "#FF3B30", padding: 15, borderRadius: 10, marginBlock: 20 },
@@ -156,44 +156,45 @@ const styles = StyleSheet.create({
   scroll: {
     padding: 20,
   },
-  title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    color: "#fff",
-    textAlign: "center",
-    marginBottom: 30,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#1c2541",
-    borderRadius: 8,
-    marginBottom: 30,
-  },
-  input: {
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-    flex: 1,
-    color: "#000",
-    padding: 12,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: "#007BFF",
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
+  // title: {
+  //   fontSize: 36,
+  //   fontWeight: "bold",
+  //   color: "#fff",
+  //   textAlign: "center",
+  //   marginBottom: 30,
+  // },
+  // inputContainer: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   backgroundColor: "#1c2541",
+  //   borderRadius: 8,
+  //   marginBottom: 30,
+  // },
+  // input: {
+  //   backgroundColor: "#fff",
+  //   borderTopLeftRadius: 10,
+  //   borderBottomLeftRadius: 10,
+  //   flex: 1,
+  //   color: "#000",
+  //   padding: 12,
+  //   fontSize: 16,
+  // },
+  // button: {
+  //   backgroundColor: "#007BFF",
+  //   paddingVertical: 14,
+  //   paddingHorizontal: 18,
+  //   borderTopRightRadius: 10,
+  //   borderBottomRightRadius: 10,
+  // },
+  // buttonText: {
+  //   color: "#fff",
+  //   fontWeight: "600",
+  // },
   responseContainer: {
     backgroundColor: "#1c2541",
     borderRadius: 10,
-    padding: 20
+    padding: 20,
+    marginTop: 20
   },
   questionTitle: {
     color: "#fff",
@@ -216,5 +217,61 @@ const styles = StyleSheet.create({
     color: "#ccc",
     fontSize: 16,
     lineHeight: 24,
+  },
+
+  container: {
+    flex: 1,
+    backgroundColor: "#0f172a", // deep navy background
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: "#38bdf8", // cyan accent
+    marginBottom: 30,
+    textAlign: "center",
+    textShadowColor: "rgba(56, 189, 248, 0.5)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 8,
+    letterSpacing: 1,
+  },
+  inputContainer: {
+    width: "100%",
+    backgroundColor: "#1e293b",
+    borderRadius: 15,
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    shadowColor: "#38bdf8",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  input: {
+    flex: 1,
+    height: 45,
+    color: "#fff",
+    backgroundColor: "#334155",
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginRight: 10,
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: "#38bdf8",
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 10,
+    shadowColor: "#38bdf8",
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  buttonText: {
+    color: "#0f172a",
+    fontWeight: "700",
+    fontSize: 16,
   },
 });

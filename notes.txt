@@ -1,1 +1,6 @@
 to run program = npm run web
+
+loader on login, verify button
+add error message on otp verify button
+verify button size large
+
