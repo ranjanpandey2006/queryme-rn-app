@@ -4,11 +4,15 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { removeToken } from "../utils/auth";
+import RenderHtml from 'react-native-render-html';
+import { useWindowDimensions } from 'react-native';
+import Markdown from 'react-native-markdown-display';
 
 export default function LandingPage() {
   const router = useRouter();
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
+  const { width } = useWindowDimensions();
 
   // useEffect(() => {
   //   const checkLogin = async () => {
@@ -39,7 +43,7 @@ export default function LandingPage() {
   const [loading2, setLoading2] = useState(false);
 
   // Replace this URL with your actual backend or OpenAI API endpoint
-  const API_URL = "https://queryme.in/smondoville/app/text_query";
+  const API_URL = "http://127.0.0.1:5500";
 
   const handleSubmit = async () => {
     if (!query.trim()) return;
@@ -48,7 +52,7 @@ export default function LandingPage() {
     Keyboard.dismiss();
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/text_query`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -131,7 +135,11 @@ export default function LandingPage() {
             {reply ? (
               <>
                 <Text style={styles.replyTitle}>Assistant's Reply:</Text>
-                <Text style={styles.replyText}>{reply}</Text>
+                <Text style={styles.replyText}><Markdown>{reply}</Markdown></Text>
+                {/* <RenderHtml
+                  contentWidth={width}
+                  source={{ html: `<div>${reply}<div>` }}
+                /> */}
               </>
             ) : null}
           </View>

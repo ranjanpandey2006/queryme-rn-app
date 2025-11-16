@@ -11,6 +11,7 @@ import {
     View,
 } from "react-native";
 
+const API_URL = "http://127.0.0.1:5500";
 // ✅ Custom Checkbox component (no dependency)
 const CustomCheckbox: React.FC<{
     checked: boolean;
@@ -33,6 +34,7 @@ const LoginScreen: React.FC = () => {
     const [otp, setOtp] = useState("");
     const [loading, setLoading] = useState(false);
     const [otpErrMsg, setOtpErrMsg] = useState(false);
+    const [errorMsg, setErrorMsg] = useState();
 
     const navigation = useNavigation();
 
@@ -41,7 +43,7 @@ const LoginScreen: React.FC = () => {
         if (name && mobile && society && agree) {
             try {
                 // Make API call to backend for OTP generation
-                const response = await fetch("http://127.0.0.1:5500/register-user/", {
+                const response = await fetch(`${API_URL}/register-user/`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -66,7 +68,8 @@ const LoginScreen: React.FC = () => {
                     setLoading(false);
                     // Server responded with an error
                     Alert.alert("Error", data.message || "Something went wrong.");
-                    alert("Something went wrong.");
+                    //alert("Something went wrong.");
+                    setErrorMsg(data.message || "Something went wrong.");
                 }
             } catch (error) {
                 setLoading(false);
@@ -85,7 +88,7 @@ const LoginScreen: React.FC = () => {
         setLoading(true);
         if (otp) {
             try {
-                const response = await fetch("http://127.0.0.1:5500/validate-otp/", {
+                const response = await fetch(`${API_URL}/validate-otp/`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -131,7 +134,13 @@ const LoginScreen: React.FC = () => {
                 </View>
                 <Text style={styles.title}>QueryMe{"\n"}AI Assistant</Text>
             </View>
-
+            {
+                errorMsg && (
+                    <View style={styles.errorMsgBox}>
+                        <Text style={styles.errorMsgText}>{errorMsg}</Text>
+                    </View>
+                )
+            }
             {/* Form Section */}
             {!showOTP && (
                 <View style={styles.form}>
@@ -203,6 +212,22 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingTop: 60,
         paddingHorizontal: 30,
+    },
+    errorMsgBox: {
+        backgroundColor: '#ffeaea',
+        borderColor: '#ff4d4f',
+        borderWidth: 1,
+        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        marginBottom: 14,
+        alignSelf: 'stretch',
+    },
+    errorMsgText: {
+        color: '#d32f2f',
+        fontSize: 15,
+        textAlign: 'center',
+        fontWeight: '600',
     },
     logoContainer: {
         alignItems: "center",

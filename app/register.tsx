@@ -36,7 +36,8 @@ export default function Register() {
         Alert.alert("Failed", data.message || "Registration failed");
       }
     } catch (err) {
-      console.error(err);
+      debugger;
+      console.log(err);
       Alert.alert("Error", "Something went wrong. Try again.");
     } finally {
       setLoading(false);
