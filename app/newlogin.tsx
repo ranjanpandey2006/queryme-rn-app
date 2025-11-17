@@ -159,7 +159,7 @@ const LoginScreen: React.FC = () => {
                     />
                     <TextInput
                         style={styles.input}
-                        placeholder="Select Society"
+                        placeholder="Your Society Name"
                         value={society}
                         onChangeText={setSociety}
                     />

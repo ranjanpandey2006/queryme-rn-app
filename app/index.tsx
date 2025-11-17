@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: "#0f172a", // deep navy background
+    backgroundColor: "#ffffffff", // deep navy background
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     color: "#38bdf8", // cyan accent
     marginBottom: 30,
     textAlign: "center",
-    textShadowColor: "rgba(56, 189, 248, 0.5)",
+    textShadowColor: "rgba(255, 255, 255, 0.5)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 8,
     letterSpacing: 1,
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 45,
     color: "#fff",
-    backgroundColor: "#334155",
+    backgroundColor: "#ffffffff",
     borderRadius: 10,
     paddingHorizontal: 15,
     marginRight: 10,
