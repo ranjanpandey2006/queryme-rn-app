@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
@@ -8,10 +8,11 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View,
+    View
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const API_URL = "http://127.0.0.1:5500";
+const API_URL = "http://192.168.29.169:5500";
 // ✅ Custom Checkbox component (no dependency)
 const CustomCheckbox: React.FC<{
     checked: boolean;
@@ -25,16 +26,67 @@ const CustomCheckbox: React.FC<{
     </TouchableOpacity>
 );
 
+// ✅ Custom Dropdown component
+const CustomDropdown: React.FC<{
+    value: string;
+    onChange: (val: string) => void;
+    options: string[];
+    placeholder?: string;
+}> = ({ value, onChange, options, placeholder = "Select an option" }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <View style={styles.dropdownContainer}>
+            <TouchableOpacity
+                style={styles.dropdownButton}
+                onPress={() => setIsOpen(!isOpen)}
+            >
+                <Text style={[styles.dropdownButtonText, !value && { color: '#999' }]}>
+                    {value || placeholder}
+                </Text>
+                <Text style={styles.dropdownArrow}>{isOpen ? '▲' : '▼'}</Text>
+            </TouchableOpacity>
+            {isOpen && (
+                <View style={styles.dropdownMenu}>
+                    {options.map((option, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={[
+                                styles.dropdownItem,
+                                value === option && styles.dropdownItemSelected
+                            ]}
+                            onPress={() => {
+                                onChange(option);
+                                setIsOpen(false);
+                            }}
+                        >
+                            <Text style={[
+                                styles.dropdownItemText,
+                                value === option && styles.dropdownItemTextSelected
+                            ]}>
+                                {option}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+            )}
+        </View>
+    );
+};
+
 const LoginScreen: React.FC = () => {
     const [name, setName] = useState("");
     const [mobile, setMobile] = useState("");
     const [society, setSociety] = useState("");
     const [agree, setAgree] = useState(false);
     const [showOTP, setShowOTP] = useState(false);
-    const [otp, setOtp] = useState("");
+    const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
     const [loading, setLoading] = useState(false);
     const [otpErrMsg, setOtpErrMsg] = useState(false);
     const [errorMsg, setErrorMsg] = useState();
+    
+    // Create refs for OTP inputs
+    const otpRefs = useRef<Array<TextInput | null>>([]);
 
     const navigation = useNavigation();
 
@@ -52,7 +104,7 @@ const LoginScreen: React.FC = () => {
                         mobilenumber: mobile,
                         name,
                         society,
-                        otp,
+                        otp: otp.join(''),
                         tnc: agree
                     }),
                 });
@@ -62,7 +114,7 @@ const LoginScreen: React.FC = () => {
                     setLoading(false);
                     // OTP sent successfully
                     Alert.alert("OTP sent successfully!");
-                    alert("OTP sent successfully!");
+                    // alert("OTP sent successfully!");
                     setShowOTP(true);
                 } else {
                     setLoading(false);
@@ -75,25 +127,26 @@ const LoginScreen: React.FC = () => {
                 setLoading(false);
                 console.error("Error sending OTP:", error);
                 Alert.alert("Network Error", "Please check your connection and try again.");
-                alert("Network Error, Please check your connection and try again.");
+                // alert("Network Error, Please check your connection and try again.");
             }
         } else {
             setLoading(false);
             Alert.alert("Please fill all fields and accept terms.");
-            alert("Please fill all fields and accept terms.");
+            // alert("Please fill all fields and accept terms.");
         }
     };
 
     const handleVerify = async () => {
         setLoading(true);
-        if (otp) {
+        const otpString = otp.join('');
+        if (otpString && otpString.length === 6) {
             try {
                 const response = await fetch(`${API_URL}/validate-otp/`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ otp }),
+                    body: JSON.stringify({ otp: otpString }),
                 });
 
                 const data = await response.json();
@@ -126,21 +179,15 @@ const LoginScreen: React.FC = () => {
 
 
     return (
-        <View style={styles.container}>
-            {/* Logo */}
-            <View style={styles.logoContainer}>
+        <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
+            <View style={styles.container}>
+                {/* Logo */}
+                <View style={styles.logoContainer}>
                 <View style={styles.logoCircle}>
                     <Text style={styles.logoIcon}>🤖</Text>
                 </View>
                 <Text style={styles.title}>QueryMe{"\n"}AI Assistant</Text>
             </View>
-            {
-                errorMsg && (
-                    <View style={styles.errorMsgBox}>
-                        <Text style={styles.errorMsgText}>{errorMsg}</Text>
-                    </View>
-                )
-            }
             {/* Form Section */}
             {!showOTP && (
                 <View style={styles.form}>
@@ -157,11 +204,11 @@ const LoginScreen: React.FC = () => {
                         value={mobile}
                         onChangeText={setMobile}
                     />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Your Society Name"
+                    <CustomDropdown
                         value={society}
-                        onChangeText={setSociety}
+                        onChange={setSociety}
+                        options={['Smondovilla']}
+                        placeholder="Select Your Society"
                     />
 
                     <View style={styles.checkboxContainer}>
@@ -184,22 +231,54 @@ const LoginScreen: React.FC = () => {
                     <Text style={styles.otpTitle}>OTP Verification</Text>
                     <Text style={styles.otpText}>Enter the OTP sent to your mobile</Text>
 
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter OTP"
-                        keyboardType="numeric"
-                        value={otp}
-                        onChangeText={setOtp}
-                    />
+                    <View style={styles.otpInputContainer}>
+                        {otp.map((digit, index) => (
+                            <TextInput
+                                key={index}
+                                ref={(input) => {
+                                    otpRefs.current[index] = input;
+                                }}
+                                style={[
+                                    styles.otpBox,
+                                    otpErrMsg && styles.otpBoxError
+                                ]}
+                                placeholder="0"
+                                placeholderTextColor="#ccc"
+                                keyboardType="numeric"
+                                maxLength={1}
+                                value={digit}
+                                onChangeText={(value) => {
+                                    if (value.length <= 1 && /^[0-9]*$/.test(value)) {
+                                        const newOtp = [...otp];
+                                        newOtp[index] = value;
+                                        setOtp(newOtp);
+                                        
+                                        // Move to next input if value is entered and not last input
+                                        if (value && index < 5) {
+                                            otpRefs.current[index + 1]?.focus();
+                                        }
+                                    }
+                                }}
+                                onKeyPress={({ nativeEvent }) => {
+                                    if (nativeEvent.key === 'Backspace' && !digit && index > 0) {
+                                        const newOtp = [...otp];
+                                        newOtp[index - 1] = '';
+                                        setOtp(newOtp);
+                                        otpRefs.current[index - 1]?.focus();
+                                    }
+                                }}
+                            />
+                        ))}
+                    </View>
                     {otpErrMsg && (<Text style={styles.otpErrText}>*Incorrect OTP</Text>)}
-                    {/* <TouchableOpacity style={styles.button} onPress={() => router.push("/")}> */}
                     <TouchableOpacity style={styles.button2} onPress={handleVerify}>
                         {loading === false ?<Text style={styles.buttonText}>Verify</Text>:
                         <ActivityIndicator size="small" color="#007AFF" />}
                     </TouchableOpacity>
                 </View>
             )}
-        </View>
+            </View>
+        </SafeAreaView>
     );
 };
 
@@ -284,6 +363,54 @@ const styles = StyleSheet.create({
         marginLeft: 8,
         fontSize: 14,
     },
+    dropdownContainer: {
+        marginVertical: 8,
+        zIndex: 10,
+    },
+    dropdownButton: {
+        borderWidth: 1,
+        borderColor: "#aaa",
+        borderRadius: 8,
+        padding: 12,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: "#fff",
+    },
+    dropdownButtonText: {
+        fontSize: 14,
+        color: "#000",
+        fontWeight: "500",
+    },
+    dropdownArrow: {
+        fontSize: 12,
+        color: "#666",
+    },
+    dropdownMenu: {
+        borderWidth: 1,
+        borderColor: "#aaa",
+        borderRadius: 8,
+        marginTop: 4,
+        backgroundColor: "#fff",
+        maxHeight: 200,
+    },
+    dropdownItem: {
+        paddingHorizontal: 12,
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: "#eee",
+    },
+    dropdownItemSelected: {
+        backgroundColor: "#f0f0f0",
+    },
+    dropdownItemText: {
+        fontSize: 14,
+        color: "#000",
+    },
+    dropdownItemTextSelected: {
+        fontWeight: "700",
+        color: "#0084ff",
+    },
     button: {
         backgroundColor: "#000",
         borderRadius: 8,
@@ -312,6 +439,29 @@ const styles = StyleSheet.create({
         borderColor: "#ccc",
         borderRadius: 10,
         padding: 20,
+    },
+    otpInputContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: "100%",
+        marginVertical: 20,
+        gap: 8,
+    },
+    otpBox: {
+        flex: 1,
+        height: 50,
+        borderWidth: 2,
+        borderColor: "#0084ff",
+        borderRadius: 10,
+        fontSize: 20,
+        fontWeight: "bold",
+        textAlign: "center",
+        color: "#000",
+        backgroundColor: "#f9f9f9",
+    },
+    otpBoxError: {
+        borderColor: "#ff4d4f",
+        backgroundColor: "#fff1f0",
     },
     otpTitle: {
         fontSize: 18,

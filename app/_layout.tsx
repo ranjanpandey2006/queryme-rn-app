@@ -1,14 +1,17 @@
 import { Stack } from "expo-router";
 import React from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Layout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" options={{ title: "QueryMe" }} />
-      <Stack.Screen name="login" options={{ title: "Login" }} />
-      <Stack.Screen name="register" options={{ title: "Register" }} />
-      <Stack.Screen name="newlogin" options={{ title: "Newlogin" }} />
-    </Stack>
+    <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" options={{ title: "QueryMe" }} />
+        <Stack.Screen name="login" options={{ title: "Login" }} />
+        <Stack.Screen name="register" options={{ title: "Register" }} />
+        <Stack.Screen name="newlogin" options={{ title: "Newlogin" }} />
+      </Stack>
+    </SafeAreaView>
   );
 }
 
