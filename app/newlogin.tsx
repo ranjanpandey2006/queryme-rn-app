@@ -12,7 +12,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const API_URL = "http://192.168.29.169:5500";
+//const API_URL = "http://192.168.29.169:5500";
+const API_URL = "https://queryme.in/smondoville/app";
 // ✅ Custom Checkbox component (no dependency)
 const CustomCheckbox: React.FC<{
     checked: boolean;
@@ -207,7 +208,7 @@ const LoginScreen: React.FC = () => {
                     <CustomDropdown
                         value={society}
                         onChange={setSociety}
-                        options={['Smondovilla']}
+                        options={['Smondoville']}
                         placeholder="Select Your Society"
                     />
 
