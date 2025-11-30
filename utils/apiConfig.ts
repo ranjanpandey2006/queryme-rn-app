@@ -9,7 +9,7 @@ export const API_CONFIG = {
   alternative: 'https://api.queryme.in/smondoville/app',
   
   // Development API (local backend)
-  development: 'http://192.168.29.169:5500',
+  development: 'http://localhost:5500',
   
   // Fallback API
   fallback: 'https://queryme.in/smondoville/app',
@@ -18,7 +18,7 @@ export const API_CONFIG = {
 // Get the appropriate API URL based on environment
 export const getAPIUrl = (): string => {
   // Use production API by default
-  return API_CONFIG.production;
+  return API_CONFIG.development;
 };
 
 // Get all available endpoints for fallback

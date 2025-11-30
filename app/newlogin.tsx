@@ -12,8 +12,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-//const API_URL = "http://192.168.29.169:5500";
-const API_URL = "https://queryme.in/smondoville/app";
+const API_URL = "http://localhost:5500";
+//const API_URL = "https://queryme.in/smondoville/app";
 // ✅ Custom Checkbox component (no dependency)
 const CustomCheckbox: React.FC<{
     checked: boolean;
@@ -123,6 +123,7 @@ const LoginScreen: React.FC = () => {
                     Alert.alert("Error", data.message || "Something went wrong.");
                     //alert("Something went wrong.");
                     setErrorMsg(data.message || "Something went wrong.");
+                    navigation.navigate("login" as never);
                 }
             } catch (error) {
                 setLoading(false);
@@ -158,6 +159,7 @@ const LoginScreen: React.FC = () => {
                     Alert.alert(data.message || "OTP Verified!");
                     setShowOTP(false);
                     await AsyncStorage.setItem("loginStatus", "success");
+                    await AsyncStorage.setItem("mobilenumber", mobile);
                     navigation.navigate("index" as never);
                 } else {
                     setLoading(false);
@@ -221,7 +223,7 @@ const LoginScreen: React.FC = () => {
 
                     <TouchableOpacity style={styles.button} onPress={handleLogin}>
                         {loading === false ? <Text style={styles.buttonText}>Login</Text>:
-                        <ActivityIndicator size="small" color="#007AFF" />}
+                        <ActivityIndicator size="small" color="#fafcfdff" />}
                     </TouchableOpacity>
                 </View>
             )}
@@ -413,7 +415,7 @@ const styles = StyleSheet.create({
         color: "#0084ff",
     },
     button: {
-        backgroundColor: "#000",
+        backgroundColor: "#007AFF",
         borderRadius: 8,
         padding: 12,
         alignItems: "center",
@@ -428,7 +430,7 @@ const styles = StyleSheet.create({
         width: 280
     },
     buttonText: {
-        color: "#fff",
+        color: "#eeddddff",
         fontWeight: "600",
         fontSize: 16,
     },

@@ -102,6 +102,7 @@ export default function LandingPage() {
     setInputText("");
     setIsLoading(true);
     Keyboard.dismiss();
+    const mobilenumber = await AsyncStorage.getItem('mobilenumber');
 
     try {
       const url = `${API_URL}/text_query`;
@@ -115,6 +116,7 @@ export default function LandingPage() {
       const response = await fetchWithTimeout(url, {
         method: "POST",
         body: JSON.stringify({
+          mobilenumber: mobilenumber,
           text_input: messageText
         }),
       }, 30000, 2); // 30 second timeout, 2 retries (3 total attempts)

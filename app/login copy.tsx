@@ -1,20 +1,17 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { getAPIUrl } from '../utils/apiConfig';
 import { saveToken } from "../utils/auth";
-
-const API_URL = getAPIUrl();
 
 export default function Login() {
   const router = useRouter();
-  const [mobile, setMobile] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    if (!mobile) {
-      //alert("Please enter your registered mobile number")
-      Alert.alert("Error", "Please enter your registered mobile number");
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter both email and password");
       return;
     }
 
@@ -22,10 +19,10 @@ export default function Login() {
 
     try {
       // Example API call (replace URL with your actual API)
-      const response = await fetch(`${API_URL}/user-login/`, {
+      const response = await fetch("https://example.com/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ "mobilenumber": mobile }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
@@ -47,19 +44,30 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.biGtitle}>QueryMe AI Assistant</Text>
-      <Text style={styles.title}>Enter your registered mobile number to login</Text>
+      <Text style={styles.title}>Login</Text>
 
       <TextInput
-        placeholder="Mobile number"
+        placeholder="Email"
         style={styles.input}
-        value={mobile}
-        onChangeText={setMobile}
-        keyboardType="phone-pad"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
+
+      <TextInput
+        placeholder="Password"
+        style={styles.input}
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
       />
 
       <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
         <Text style={styles.buttonText}>{loading ? "Logging in..." : "Login"}</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push("/register")}>
+        <Text style={styles.link}>Don't have an account? Register</Text>
       </TouchableOpacity>
     </View>
   );
@@ -67,8 +75,7 @@ export default function Login() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", padding: 20, backgroundColor: "#fff" },
-  title: { fontSize: 18, fontWeight: "medium", marginBottom: 25, textAlign: "center" },
-  biGtitle: { fontSize: 24, fontWeight: "bold", marginBottom: 30, textAlign: "center" },
+  title: { fontSize: 28, fontWeight: "bold", marginBottom: 20, textAlign: "center" },
   input: { borderWidth: 1, borderColor: "#ccc", padding: 10, borderRadius: 10, marginBottom: 15 },
   button: { backgroundColor: "#007AFF", padding: 15, borderRadius: 10 },
   buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
