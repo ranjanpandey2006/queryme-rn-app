@@ -233,7 +233,7 @@ export default function LandingPage() {
           <View style={styles.centeredInputWrapper}>
             <TextInput
               style={styles.centeredTextInput}
-              placeholder="Message QueryMe..."
+              placeholder="Ask QueryMe AI Assistant..."
               placeholderTextColor="#999"
               value={inputText}
               onChangeText={setInputText}
